@@ -1,0 +1,91 @@
+// Define a generic type for API responses
+export type ApiResponse<T> = {
+  data: T | null;
+  error: string | null;
+  loading: boolean;
+};
+
+// Example: Define a type for a Product
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+  category: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Example: Define a type for a User
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  profilePictureUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Example: Define a type for a Shopping Cart Item
+export interface CartItem {
+  productId: string;
+  quantity: number;
+}
+
+// Example: Define a type for Order
+export interface Order {
+  id: string;
+  userId: string;
+  items: CartItem[];
+  totalAmount: number;
+  orderDate: string;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  shippingAddress: Address;
+  paymentMethod: 'credit_card' | 'paypal' | 'other';
+}
+
+// Example: Define a type for Address
+export interface Address {
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+}
+
+// Example: Define a type for a Category
+export interface Category {
+    id: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+}
+
+// Example: Define a type for Review
+export interface Review {
+    id: string;
+    productId: string;
+    userId: string;
+    rating: number;
+    comment: string;
+    createdAt: string;
+}
+
+// Define a type for Theme settings (optional, if you have a theme)
+export type Theme = 'light' | 'dark' | 'system';
+
+// Define a type for Route parameters (if using a router)
+export type RouteParams = {
+  [key: string]: string | undefined;
+};
+
+// Define a type for form input change events
+export type InputChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
+
+// Define a type for button click events
+export type ButtonClickEvent = React.MouseEvent<HTMLButtonElement>;
+
+// More types can be added as needed, relating to other data models in your application
