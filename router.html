@@ -1,0 +1,92 @@
+// router.ts
+ 
+ interface Route {
+  path: string;
+  component: () => HTMLElement;
+ }
+ 
+ class Router {
+  private routes: Route[] = [];
+  private history: History = window.history;
+  private rootElement: HTMLElement;
+ 
+
+  constructor(rootElement: HTMLElement) {
+   this.rootElement = rootElement;
+   this.listen();
+  }
+ 
+
+  addRoute(path: string, component: () => HTMLElement): void {
+   this.routes.push({ path, component });
+  }
+ 
+
+  navigate(path: string): void {
+   this.history.pushState(null, '', path);
+   this.render();
+  }
+ 
+
+  private render(): void {
+   const currentPath = window.location.pathname;
+   const route = this.routes.find((route) => route.path === currentPath);
+ 
+
+   if (route) {
+    this.rootElement.innerHTML = ''; // Clear existing content
+    this.rootElement.appendChild(route.component());
+   } else {
+    // Handle 404 - Route not found
+    this.rootElement.innerHTML = `
+     <div class="flex flex-col items-center justify-center h-full">
+      <h1 class="text-4xl font-bold text-gray-800 mb-4">404 Not Found</h1>
+      <p class="text-gray-600 mb-8">Sorry, the page you are looking for does not exist.</p>
+      <a href="/" data-route="/" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+       Go Home
+      </a>
+     </div>
+    `;
+    const homeLink = this.rootElement.querySelector('a[data-route="/"]');
+    if (homeLink) {
+     homeLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.navigate('/');
+     });
+    }
+   }
+  }
+ 
+
+  private listen(): void {
+   window.addEventListener('popstate', () => {
+    this.render();
+   });
+  }
+ 
+
+  init(): void {
+   document.body.addEventListener('click', (event: Event) => {
+    if ((event.target as HTMLElement).matches('[data-route]')) {
+     event.preventDefault();
+     const target = event.target as HTMLElement;
+     const route = target.dataset.route;
+      
+     if (route) {
+      this.navigate(route);
+     }
+    }
+   });
+   this.render();
+  }
+ }
+ 
+
+ export default Router;
+ 
+
+ // Example Usage (in index.ts):
+ // const router = new Router(document.getElementById('root'));
+ // router.addRoute('/', () => { ... });
+ // router.addRoute('/about', () => { ... });
+ // router.init();
