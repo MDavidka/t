@@ -1,0 +1,228 @@
+// components.ts
+ 
+
+ // Define a type for button variants
+ type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'danger';
+ 
+
+ interface ButtonProps {
+  label: string;
+  onClick: () => void;
+  variant?: ButtonVariant;
+  disabled?: boolean;
+  loading?: boolean;
+  icon?: string; // FontAwesome icon class
+ }
+ 
+
+ /**
+  * Button Component
+  * A reusable button component with different variants and states.
+  */
+ function Button({
+  label,
+  onClick,
+  variant = 'primary',
+  disabled = false,
+  loading = false,
+  icon,
+ }: ButtonProps): HTMLElement {
+  const button = document.createElement('button');
+  button.textContent = label;
+  button.addEventListener('click', onClick);
+  button.disabled = disabled || loading;
+ 
+
+  // Tailwind CSS classes based on variant and state
+  let baseClasses =
+  'py-2 px-4 rounded font-semibold focus:outline-none focus:shadow-outline transition duration-200 ease-in-out';
+  let variantClasses = '';
+ 
+
+  switch (variant) {
+  case 'primary':
+  variantClasses =
+  'bg-blue-500 hover:bg-blue-700 text-white';
+  break;
+  case 'secondary':
+  variantClasses =
+  'bg-gray-200 hover:bg-gray-300 text-gray-700';
+  break;
+  case 'outline':
+  variantClasses =
+  'border border-blue-500 hover:bg-blue-50 text-blue-500';
+  break;
+  case 'danger':
+  variantClasses =
+  'bg-red-500 hover:bg-red-700 text-white';
+  break;
+  default:
+  variantClasses =
+  'bg-blue-500 hover:bg-blue-700 text-white';
+  }
+ 
+
+  const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : '';
+  const loadingClasses = loading ? 'animate-pulse cursor-wait' : '';
+ 
+
+  button.className = `${baseClasses} ${variantClasses} ${disabledClasses} ${loadingClasses}`;
+ 
+
+  if (icon) {
+  const iconElement = document.createElement('i');
+  iconElement.className = `fas fa-${icon} mr-2`; // Use FontAwesome
+  button.prepend(iconElement);
+  }
+ 
+
+  return button;
+ }
+ 
+
+ // Define a type for form input
+ interface InputProps {
+  type: string;
+  label: string;
+  placeholder?: string;
+  value?: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+  error?: string;
+ }
+ 
+
+ /**
+  * Input Component
+  * A reusable input component with labels, placeholders, and error handling.
+  */
+ function Input({
+  type,
+  label,
+  placeholder = '',
+  value = '',
+  onChange,
+  required = false,
+  error,
+ }: InputProps): HTMLElement {
+  const container = document.createElement('div');
+  container.className = 'mb-4';
+ 
+
+  const labelElement = document.createElement('label');
+  labelElement.className = 'block text-gray-700 text-sm font-bold mb-2';
+  labelElement.textContent = label;
+  container.appendChild(labelElement);
+ 
+
+  const inputElement = document.createElement('input');
+  inputElement.type = type;
+  inputElement.placeholder = placeholder;
+  inputElement.value = value;
+  inputElement.required = required;
+  inputElement.className =
+  'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+ 
+
+  inputElement.addEventListener('input', (e: Event) => {
+  onChange((e.target as HTMLInputElement).value);
+  });
+ 
+
+  container.appendChild(inputElement);
+ 
+
+  if (error) {
+  const errorElement = document.createElement('p');
+  errorElement.className = 'text-red-500 text-xs italic';
+  errorElement.textContent = error;
+  container.appendChild(errorElement);
+  }
+ 
+
+  return container;
+ }
+ 
+
+ // Define a type for card
+ interface CardProps {
+  title: string;
+  content: string;
+  actions?: HTMLElement[];
+ }
+ 
+
+ /**
+  * Card Component
+  * A reusable card component for displaying content.
+  */
+ function Card({ title, content, actions }: CardProps): HTMLElement {
+  const card = document.createElement('div');
+  card.className = 'bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4';
+ 
+
+  const titleElement = document.createElement('h2');
+  titleElement.className = 'text-2xl font-bold mb-2';
+  titleElement.textContent = title;
+  card.appendChild(titleElement);
+ 
+
+  const contentElement = document.createElement('p');
+  contentElement.className = 'text-gray-700 text-base';
+  contentElement.textContent = content;
+  card.appendChild(contentElement);
+ 
+
+  if (actions && actions.length > 0) {
+  const actionsContainer = document.createElement('div');
+  actionsContainer.className = 'mt-4 flex justify-end';
+  actions.forEach((action) => actionsContainer.appendChild(action));
+  card.appendChild(actionsContainer);
+  }
+ 
+
+  return card;
+ }
+ 
+
+ // Navigation Item Type
+ interface NavItem {
+  label: string;
+  href: string;
+ }
+ 
+
+ interface NavbarProps {
+  items: NavItem[];
+ }
+ 
+
+ /**
+  * Navbar Component
+  */
+ function Navbar({ items }: NavbarProps): HTMLElement {
+  const nav = document.createElement('nav');
+  nav.className = 'bg-gray-800 p-4';
+ 
+
+  const ul = document.createElement('ul');
+  ul.className = 'flex space-x-4';
+ 
+
+  items.forEach((item) => {
+  const li = document.createElement('li');
+  const a = document.createElement('a');
+  a.href = item.href;
+  a.textContent = item.label;
+  a.className = 'text-white hover:text-gray-200';
+  li.appendChild(a);
+  ul.appendChild(li);
+  });
+ 
+
+  nav.appendChild(ul);
+  return nav;
+ }
+ 
+
+ export { Button, Input, Card, Navbar };
