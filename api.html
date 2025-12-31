@@ -1,0 +1,118 @@
+// api.ts
+ 
+
+ // Define a base URL for your API.  Adjust this to your actual backend URL.
+ const BASE_URL = 'https://your-api-endpoint.com';
+ 
+
+ // Generic type for API responses that include data and optional metadata.
+ interface ApiResponse<T> {
+  data: T | null;
+  error: string | null;
+  metadata?: any; // Add metadata as needed (e.g., pagination info)
+ }
+ 
+
+ // Example: Fetching data from an endpoint. Replace 'YourDataType' with a specific interface.
+ export async function fetchData<T>(endpoint: string): Promise<ApiResponse<T>> {
+  try {
+  const response = await fetch(`${BASE_URL}/${endpoint}`, {
+  method: 'GET',
+  headers: {
+  'Content-Type': 'application/json',
+  // Add any necessary authentication headers here.  For example:
+  // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+  },
+  });
+ 
+
+  if (!response.ok) {
+  console.error(`API Error: ${response.status} - ${response.statusText}`);
+  return { data: null, error: `Request failed with status ${response.status}` };
+  }
+ 
+
+  const data = await response.json() as T; // Type assertion here.
+  return { data: data, error: null };
+  } catch (error) {
+  console.error('Fetch Error:', error);
+  return { data: null, error: 'Failed to fetch data.' };
+  }
+ }
+ 
+
+ // Example: Submitting a form.  Replace 'YourDataType' and 'YourFormType' with specific interfaces.
+ export async function submitForm<T, K>(endpoint: string, formData: K): Promise<ApiResponse<T>> {
+  try {
+  const response = await fetch(`${BASE_URL}/${endpoint}`, {
+  method: 'POST',
+  headers: {
+  'Content-Type': 'application/json',
+  // Add any necessary authentication headers here.
+  // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+  },
+  body: JSON.stringify(formData),
+  });
+ 
+
+  if (!response.ok) {
+  console.error(`API Error: ${response.status} - ${response.statusText}`);
+  return { data: null, error: `Request failed with status ${response.status}` };
+  }
+ 
+
+  const data = await response.json() as T; // Type assertion here.
+  return { data: data, error: null };
+  } catch (error) {
+  console.error('Fetch Error:', error);
+  return { data: null, error: 'Failed to submit form.' };
+  }
+ }
+ 
+
+ // Example: Handling authentication (login).  Replace 'AuthResponse' and 'AuthCredentials' with interfaces.
+ export async function login(credentials: any): Promise<ApiResponse<any>> {
+  try {
+  const response = await fetch(`${BASE_URL}/login`, { // Adjust the endpoint
+  method: 'POST',
+  headers: {
+  'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(credentials),
+  });
+ 
+
+  if (!response.ok) {
+  console.error(`Login Error: ${response.status} - ${response.statusText}`);
+  return { data: null, error: `Login failed with status ${response.status}` };
+  }
+ 
+
+  const data = await response.json();
+  // Store the token in local storage upon successful login.
+  if (data.token) {
+  localStorage.setItem('token', data.token);
+  }
+  return { data: data, error: null };
+  } catch (error) {
+  console.error('Login Error:', error);
+  return { data: null, error: 'Failed to login.' };
+  }
+ }
+ 
+
+ // Example: Logging out (clearing token).
+ export function logout(): void {
+  localStorage.removeItem('token');
+  // Optionally, redirect the user to the login page.
+  window.location.href = '/login'; // Adjust the redirect URL as needed.
+ }
+ 
+
+ // Example: Checking if the user is authenticated.
+ export function isAuthenticated(): boolean {
+  return !!localStorage.getItem('token');
+ }
+ 
+
+ // Add more API functions as needed (e.g., update, delete).
