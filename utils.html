@@ -1,0 +1,113 @@
+// utils.ts
+
+/**
+ * Formats a date object into a human-readable string.
+ * @param date The date to format.
+ * @param options Intl.DateTimeFormat options.
+ * @returns The formatted date string.
+ */
+export function formatDate(date: Date, options?: Intl.DateTimeFormatOptions): string {
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  };
+
+  const mergedOptions = { ...defaultOptions, ...options };
+
+  return new Intl.DateTimeFormat('en-US', mergedOptions).format(date);
+}
+
+/**
+ * Truncates a string to a specified length and adds an ellipsis if it exceeds the maximum length.
+ * @param str The string to truncate.
+ * @param maxLength The maximum length of the string.
+ * @returns The truncated string.
+ */
+export function truncateString(str: string, maxLength: number): string {
+  if (str.length <= maxLength) {
+    return str;
+  }
+  return str.substring(0, maxLength) + '...';
+}
+
+/**
+ * Converts a string to title case.
+ * @param str The string to convert.
+ * @returns The title-cased string.
+ */
+export function toTitleCase(str: string): string {
+  return str.replace(
+    /\w\S*/g,
+    function(txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    }
+  );
+}
+
+/**
+ * Debounces a function to prevent it from being called too frequently.
+ * @param func The function to debounce.
+ * @param delay The delay in milliseconds.
+ * @returns A debounced version of the function.
+ */
+export function debounce<T extends (...args: any[]) => any>(func: T, delay: number): T {
+  let timeoutId: ReturnType<typeof setTimeout> | null;
+
+  return function(...args: Parameters<T>): void {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    timeoutId = setTimeout(() => {
+      func(...args);
+    }, delay);
+  } as T;
+}
+
+/**
+ * Generates a random string of a specified length.
+ * @param length The length of the random string.
+ * @returns The random string.
+ */
+export function generateRandomString(length: number): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+/**
+ * Validates if a string is a valid email address.
+ * @param email The email address to validate.
+ * @returns True if the email is valid, false otherwise.
+ */
+export function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+/**
+ * Delays execution for a specified number of milliseconds.
+ * @param ms The number of milliseconds to delay.
+ * @returns A promise that resolves after the delay.
+ */
+export function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Parses a JSON string and handles potential errors.
+ * @param jsonString The JSON string to parse.
+ * @returns The parsed JSON object, or null if an error occurs.
+ */
+export function safeParseJson<T>(jsonString: string): T | null {
+  try {
+    return JSON.parse(jsonString) as T;
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
+    return null;
+  }
+}
